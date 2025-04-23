@@ -1,5 +1,6 @@
 using API_MakeupCRUD.Context;
 using API_MakeupCRUD.DTOs;
+using API_MakeupCRUD.Services;
 using API_MakeupCRUD.Validators;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Entity Framework
 var connectionString = builder.Configuration.GetConnectionString("Connection");
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
+
+// Services
+builder.Services.AddScoped<IMakeupService, MakeupService>();
 
 // Validator
 builder.Services.AddScoped<IValidator<MakeupInsertDto>, MakeupInsertValidator>();
