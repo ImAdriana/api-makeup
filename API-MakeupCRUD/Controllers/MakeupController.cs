@@ -1,6 +1,7 @@
 ﻿using API_MakeupCRUD.Context;
 using API_MakeupCRUD.DTOs;
 using API_MakeupCRUD.Models;
+using API_MakeupCRUD.Services;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,51 +14,28 @@ namespace API_MakeupCRUD.Controllers
     public class MakeupController : ControllerBase
     {
         private AppDbContext _context;
+        private IMakeupService _makeupService;
         private IValidator<MakeupInsertDto> _makeupInsertValidator;
         private IValidator<MakeupUpdateDto> _makeupUpdateValidator;
 
-        public MakeupController(AppDbContext context, IValidator<MakeupInsertDto> makeupInsertValidator, IValidator<MakeupUpdateDto> makeupUpdateValidator)
+        public MakeupController(AppDbContext context, IValidator<MakeupInsertDto> makeupInsertValidator, IValidator<MakeupUpdateDto> makeupUpdateValidator, IMakeupService makeupService)
         {
             _context = context;
             _makeupInsertValidator = makeupInsertValidator;
             _makeupUpdateValidator = makeupUpdateValidator;
+            _makeupService = makeupService;
         }
 
-
-        // 
         [HttpGet]
         public async Task<IEnumerable<MakeupDto>> Get() =>
-            await _context.MakeupProducts.Select(m => new MakeupDto
-            {
-                Id = m.Id,
-                Name = m.Name,
-                BrandID = m.BrandID,
-                Volume = m.Volume,
-                Price = m.Price,
-                Type = m.Type,
-            }).ToListAsync();
+            await _makeupService.Get();
 
 
         [HttpGet("{id}")]
         public async Task<ActionResult<MakeupDto>> GetById(int id)
         {
-            var makeup = await _context.MakeupProducts.FindAsync(id);
-            if (makeup == null)
-            {
-                return NotFound();
-            }
-
-            var makeupDto = new MakeupDto
-            {
-                Id = makeup.Id,
-                Name = makeup.Name,
-                BrandID = makeup.BrandID,
-                Volume = makeup.Volume,
-                Price = makeup.Price,
-                Type = makeup.Type,
-            };
-            return Ok(makeupDto);
-
+            var makeupDto = await _makeupService.GetById(id);
+            return makeupDto == null ? NotFound() : Ok(makeupDto);
         }
 
         [HttpPut("{id}")]
@@ -69,32 +47,8 @@ namespace API_MakeupCRUD.Controllers
                 return BadRequest(validationResult.Errors);
             }
 
-            var makeup = await _context.MakeupProducts.FindAsync(id);
-
-            if (makeup == null)
-            {
-                return NotFound();
-            }
-
-            makeup.Name = makeupUpdatedDto.Name;
-            makeup.Volume = makeupUpdatedDto.Volume;
-            makeup.Price = makeupUpdatedDto.Price;
-            makeup.Type = makeupUpdatedDto.Type;
-            makeup.Id = makeupUpdatedDto.Id;
-
-            await _context.SaveChangesAsync();
-
-            var makeupDto = new MakeupDto
-            {
-                Id = makeup.Id,
-                Name = makeup.Name,
-                BrandID = makeup.BrandID,
-                Volume = makeup.Volume,
-                Price = makeup.Price,
-                Type = makeup.Type,
-            };
-
-            return Ok(makeupDto);
+            var makeupDto = await _makeupService.Update(id, makeupUpdatedDto);
+            return makeupDto == null ? NotFound() : Ok(makeupDto);
         }
 
         [HttpPost]
@@ -105,46 +59,18 @@ namespace API_MakeupCRUD.Controllers
             {
                 return BadRequest(validationResult.Errors);
             }
+            var makeupDto = await _makeupService.Add(makeupInsertDto);
 
-            var makeup = new MakeupProduct()
-            {
-                Name = makeupInsertDto.Name,
-                BrandID = makeupInsertDto.BrandID,
-                Volume = makeupInsertDto.Volume,
-                Price = makeupInsertDto.Price,
-                Type = makeupInsertDto.Type,
-            };
-
-            await _context.MakeupProducts.AddAsync(makeup);
-            await _context.SaveChangesAsync(); // La base de datos representa los cambios
-
-            var makeupDto = new MakeupDto
-            {
-                Id = makeup.Id,
-                Name = makeup.Name,
-                BrandID = makeup.BrandID,
-                Volume = makeup.Volume,
-                Price = makeup.Price,
-                Type = makeup.Type,
-            };
-
-            return CreatedAtAction(nameof(GetById), new {id = makeup.Id}, makeupDto);
+            return CreatedAtAction(nameof(GetById), new {id = makeupDto.Id}, makeupDto);
         }
 
         
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult<MakeupDto>> Delete(int id)
         {
-            var makeup = await _context.MakeupProducts.FindAsync(id);
-            if(makeup == null)
-            {
-                return NotFound();
-            }
-            _context.MakeupProducts.Remove(makeup);
-            await _context.SaveChangesAsync();
-
-            return Ok();
+            var makeupDto = await _makeupService.Delete(id);
+            return makeupDto == null ? NotFound() : Ok(makeupDto);
         }
          
 
