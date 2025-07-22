@@ -1,6 +1,7 @@
 ﻿using API_MakeupCRUD.Context;
 using API_MakeupCRUD.DTOs;
 using API_MakeupCRUD.Models;
+using API_MakeupCRUD.Repository;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,10 +10,11 @@ namespace API_MakeupCRUD.Services
     public class MakeupService : IMakeupService
     {
         private AppDbContext _context;
-
-        public MakeupService(AppDbContext context)
+        public IRepository<MakeupProduct> _makeupRepository;
+        public MakeupService(AppDbContext context, IRepository<MakeupProduct> makeupProduct)
         {
             _context = context;
+            _makeupRepository = makeupProduct;
             
         }
         public async Task<IEnumerable<MakeupDto>> Get() =>
@@ -25,9 +27,6 @@ namespace API_MakeupCRUD.Services
                 Price = m.Price,
                 Type = m.Type,
             }).ToListAsync();
-        
-           
-        
 
         public async Task<MakeupDto> GetById(int id)
         {
