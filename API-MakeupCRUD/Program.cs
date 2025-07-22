@@ -1,3 +1,4 @@
+using API_MakeupCRUD.Automappers;
 using API_MakeupCRUD.Context;
 using API_MakeupCRUD.DTOs;
 using API_MakeupCRUD.Models;
@@ -23,6 +24,9 @@ builder.Services.AddScoped<IValidator<MakeupUpdateDto>, MakeupUpdateValidator>()
 
 // Repository
 builder.Services.AddScoped<IRepository<MakeupProduct>, MakeupRepository>();
+
+// Mappers
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddControllers();
 
