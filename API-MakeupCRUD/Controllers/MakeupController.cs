@@ -13,14 +13,12 @@ namespace API_MakeupCRUD.Controllers
     [ApiController]
     public class MakeupController : ControllerBase
     {
-        private AppDbContext _context;
         private IMakeupService _makeupService;
         private IValidator<MakeupInsertDto> _makeupInsertValidator;
         private IValidator<MakeupUpdateDto> _makeupUpdateValidator;
 
-        public MakeupController(AppDbContext context, IValidator<MakeupInsertDto> makeupInsertValidator, IValidator<MakeupUpdateDto> makeupUpdateValidator, IMakeupService makeupService)
+        public MakeupController(IValidator<MakeupInsertDto> makeupInsertValidator, IValidator<MakeupUpdateDto> makeupUpdateValidator, IMakeupService makeupService)
         {
-            _context = context;
             _makeupInsertValidator = makeupInsertValidator;
             _makeupUpdateValidator = makeupUpdateValidator;
             _makeupService = makeupService;
