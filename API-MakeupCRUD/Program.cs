@@ -1,5 +1,7 @@
 using API_MakeupCRUD.Context;
 using API_MakeupCRUD.DTOs;
+using API_MakeupCRUD.Models;
+using API_MakeupCRUD.Repository;
 using API_MakeupCRUD.Services;
 using API_MakeupCRUD.Validators;
 using FluentValidation;
@@ -18,7 +20,12 @@ builder.Services.AddScoped<IMakeupService, MakeupService>();
 // Validator
 builder.Services.AddScoped<IValidator<MakeupInsertDto>, MakeupInsertValidator>();
 builder.Services.AddScoped<IValidator<MakeupUpdateDto>, MakeupUpdateValidator>();
+
+// Repository
+builder.Services.AddScoped<IRepository<MakeupProduct>, MakeupRepository>();
+
 builder.Services.AddControllers();
+
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
