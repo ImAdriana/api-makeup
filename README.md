@@ -7,18 +7,18 @@ API RESTful desarrollada con ASP.NET Core para gestionar productos de maquillaje
 - MakeupProduct
 
 ## Funcionalidades principales
-CRUD completo para Brand y MakeupProduct.
+- CRUD completo para Brand y MakeupProduct.
 
-Relaciones entre entidades (MakeupProduct → Brand).
-Validaciones de datos.
+- Relaciones entre entidades (MakeupProduct → Brand).
+- Validaciones de datos.
 
 ## Arquitectura en capas:
-Controllers
-DTOs
-Models
-Services
-Repositories
+- Controllers
+- DTOs
+- Models
+- Services
+- Repositories
 
-Inyección de dependencias configurada.
-Conexión a SQL Server usando Entity Framework Core.
-Documentación de endpoints con Swagger.
+- Inyección de dependencias configurada.
+- Conexión a SQL Server usando Entity Framework Core.
+- Documentación de endpoints con Swagger.
